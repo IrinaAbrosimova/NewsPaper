@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Sum
 from django.utils.translation import pgettext_lazy
+from django.urls import reverse
 
 
 post = 'PST'
@@ -35,7 +36,7 @@ class Post(models.Model):
     type = models.CharField(max_length=7, choices=TYPE)
     time_in = models.DateTimeField(auto_now_add=True)
     category = models.ManyToManyField(Category, through='PostCategory')
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=100)
     text = models.TextField()
     rating = models.IntegerField(default=0)
 
@@ -56,6 +57,9 @@ class Post(models.Model):
 
     def __str__(self):
         return f'{self.title.title()}: {self.text[:20]}'
+
+    def get_absolute_url(self):
+        return reverse('post', args=[str(self.id)])
 
 
 class PostCategory(models.Model):

@@ -1,29 +1,30 @@
 from datetime import datetime
 
-from django.db.models import Count
-from django.views.generic import ListView, DetailView
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+
+from .filters import PostFilter
+from .forms import PostForm
 from .models import Post
 
 
-class NewsList(ListView):
+class PostList(ListView):
     model = Post
     ordering = '-time_in'
     template_name = 'news.html'
     context_object_name = 'news'
+    paginate_by = 10
 
-    # Метод get_context_data позволяет нам изменить набор данных,
-    # который будет передан в шаблон.
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.filterset = PostFilter(self.request.GET, queryset)
+        return self.filterset.qs
+
     def get_context_data(self, **kwargs):
-        # С помощью super() мы обращаемся к родительским классам
-        # и вызываем у них метод get_context_data с теми же аргументами,
-        # что и были переданы нам.
-        # В ответе мы должны получить словарь.
         context = super().get_context_data(**kwargs)
-        # К словарю добавим текущую дату в ключ 'time_now'.
         context['time_now'] = datetime.utcnow()
-        # Добавим ещё одну пустую переменную,
-        # чтобы на её примере рассмотреть работу ещё одного фильтра.
         context['qty_post'] = len(Post.objects.order_by('time_in').values('id'))
+        context['filterset'] = self.filterset
         return context
 
 
@@ -32,3 +33,37 @@ class PostDetail(DetailView):
     template_name = 'post.html'
     context_object_name = 'post'
     queryset = Post.objects.all()
+
+
+class PostCreate(CreateView):
+    form_class = PostForm
+    model = Post
+    template_name = 'postcreate.html'
+
+    def form_valid(self, form):
+        post = form.save(commit=False)
+        print(post)
+        if 'news' in self.request.path:
+            post_type = 'NWS'
+        elif 'post' in self.request.path:
+            post_type = 'PST'
+        post.type = post_type
+        post.save()
+        return super().form_valid(form)
+
+
+class PostUpdate(UpdateView):
+    template_name = 'postcreate.html'
+    form_class = PostForm
+    model = Post
+
+    def get_object(self, **kwargs):
+        id = self.kwargs.get('pk')
+        return Post.objects.get(pk=id)
+
+
+class PostDelete(DeleteView):
+    model = Post
+    template_name = 'postdelete.html'
+    queryset = Post.objects.all()
+    success_url = reverse_lazy('news')
