@@ -39,6 +39,7 @@ class PostCreate(CreateView):
     form_class = PostForm
     model = Post
     template_name = 'postcreate.html'
+    context_object_name = 'create'
 
     def form_valid(self, form):
         post = form.save(commit=False)
@@ -54,6 +55,7 @@ class PostCreate(CreateView):
 
 class PostUpdate(UpdateView):
     template_name = 'postcreate.html'
+    context_object_name = 'update'
     form_class = PostForm
     model = Post
 
@@ -65,5 +67,6 @@ class PostUpdate(UpdateView):
 class PostDelete(DeleteView):
     model = Post
     template_name = 'postdelete.html'
+    context_object_name = 'delete'
     queryset = Post.objects.all()
     success_url = reverse_lazy('news')

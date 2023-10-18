@@ -28,6 +28,7 @@ News
                <td>Описание</td>
                <td>Автор</td>
                <td>Дата публикации</td>
+               <td>Подробнее</td>
            </tr>
            {% for post in news %}
            <tr>
@@ -35,6 +36,7 @@ News
                <td>{{ post.text|truncatechars:20 }}</td>
                <td>{{ post.author }}</td>
                <td>{{ post.time_in|date:'d M Y' }}</td>
+               <td><a class="nav-link active" aria-current="page" href="/news/{{ post.id  }}">...</a><td>
            </tr>
            {% endfor %}
 
