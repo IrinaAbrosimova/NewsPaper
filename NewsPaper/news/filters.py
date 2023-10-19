@@ -6,34 +6,15 @@ from django import forms
 
 
 class PostFilter(FilterSet):
-    time_in = DateFilter(
-        field_name='time_in',
-        label='Дата (позже)',
-        lookup_expr='gt',
-        widget=DateInput(
-            attrs={
-                'type': 'date',
-            }
-        ),
-    )
-    title = CharFilter(
-        field_name='title',
-        label='Название',
-        lookup_expr='icontains',
-    )
-    author = CharFilter(
-        field_name='author__username',
-        label='Автор',
-        lookup_expr='icontains',
-    )
-    category = django_filters.ModelMultipleChoiceFilter(queryset=Category.objects.all(),
-                                                        widget=forms.CheckboxSelectMultiple(
-                                                            attrs={'category': 'category'}), label='Category')
+    title = django_filters.Filter(field_name='title', lookup_expr='icontains', label='Название')
+    time_in = django_filters.DateFilter(field_name='time_in', lookup_expr='gte', widget=DateInput(attrs={'type': 'date'}), label='Дата (позже)')
+    category = django_filters.ModelMultipleChoiceFilter(queryset=Category.objects.all(), widget=forms.CheckboxSelectMultiple(attrs={'category': 'category'}), label = 'Категория')
 
     class Meta:
         model = Post
         fields = [
-
-            'title',
+            'category',
             'author',
+            'title',
+            'time_in'
         ]

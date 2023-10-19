@@ -5,8 +5,9 @@ Post
 {% endblock title %}
 
 {% block content %}
-<a href="{%url 'postedit' post.pk%}">Редактировать статью</a>
-<a href="{%url 'postdelete' post.pk%}">Удалить статью</a>
+<a href="/news/search/">Поиск</a>
+<a href="{%url 'edit' post.pk%}">Редактировать статью</a>
+<a href="{%url 'delete' post.pk%}">Удалить статью</a>
 <p>
 <h1>{{ post.title }}</h1>
 <p> Рейтинг: {{post.rating}} </p>

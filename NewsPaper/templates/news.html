@@ -9,8 +9,9 @@ News
 {% endblock title %}
 
 {% block content %}
-<a href="/news/postcreate/">Создать новость</a>
-<a href="/news/postcreate/">Создать статью</a>
+<a href="/news/search/">Поиск</a>
+<a href="/news/create/">Создать новость</a>
+<a href="/news/create/">Создать статью</a>
 <p>
 <h1>Все новости статьи ({{ qty_post }})</h1>
 <p>
@@ -32,10 +33,10 @@ News
            </tr>
            {% for post in news %}
            <tr>
-               <td>{{ post.title }}</td>
-               <td>{{ post.text|truncatechars:20 }}</td>
-               <td>{{ post.author }}</td>
-               <td>{{ post.time_in|date:'d M Y' }}</td>
+               <td><p align="left">{{ post.title }}</td>
+               <td><p align="left">{{ post.text|truncatechars:20 }}</td>
+               <td><p align="left">{{ post.author }}</td>
+               <td><p align="left">{{ post.time_in|date:'d M Y' }}</td>
                <td><a class="nav-link active" aria-current="page" href="/news/{{ post.id  }}">...</a><td>
            </tr>
            {% endfor %}

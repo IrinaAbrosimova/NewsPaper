@@ -11,8 +11,7 @@ class PostForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'text': forms.TextInput(attrs={'class': 'form-control'}),
-            'category': forms.SelectMultiple(attrs={'class': 'form-control'}),
-            'author': forms.SelectMultiple(attrs={'class': 'form-control'}),
+            'category': forms.SelectMultiple(attrs={'class': 'form-control'})
         }
 
     def clean(self):
