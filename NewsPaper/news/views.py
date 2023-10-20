@@ -43,6 +43,7 @@ class PostSearch(ListView):
 class PostDetail(DetailView):
     model = Post
     template_name = 'post.html'
+    context_object_name = 'post'
     queryset = Post.objects.all()
 
 
@@ -54,8 +55,10 @@ class PostCreate(CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         if 'post' in self.request.path:
-            type = 'PST'
-        self.object.type = type
+            type_ = 'PST'
+        elif 'news' in self.request.path:
+            type_ = 'NWS'
+        self.object.type = type_
         return super().form_valid(form)
 
 
