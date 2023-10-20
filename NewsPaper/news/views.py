@@ -3,7 +3,7 @@ from datetime import datetime
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from .filters import PostFilter
+from .filters import PostFilter, NewsFilter
 from .forms import PostForm
 from .models import Post
 
@@ -17,7 +17,7 @@ class PostList(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        self.filterset = PostFilter(self.request.GET, queryset)
+        self.filterset = NewsFilter(self.request.GET, queryset)
         return self.filterset.qs
 
     def get_context_data(self, **kwargs):
@@ -43,7 +43,6 @@ class PostSearch(ListView):
 class PostDetail(DetailView):
     model = Post
     template_name = 'post.html'
-    context_object_name = 'post'
     queryset = Post.objects.all()
 
 
@@ -53,14 +52,10 @@ class PostCreate(CreateView):
     template_name = 'postcreate.html'
 
     def form_valid(self, form):
-        post = form.save(commit=False)
-        print(post)
-        if 'news' in self.request.path:
-            post_type = 'NWS'
-        elif 'post' in self.request.path:
-            post_type = 'PST'
-        post.type = post_type
-        post.save()
+        self.object = form.save(commit=False)
+        if 'post' in self.request.path:
+            type = 'PST'
+        self.object.type = type
         return super().form_valid(form)
 
 

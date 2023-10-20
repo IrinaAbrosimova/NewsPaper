@@ -5,10 +5,13 @@ News
 {% endblock title %}
 
 {% block content %}
-<h3>Новая статья</h3>
-<form method="POST">
+<h1>Новая статья</h1><br>
+<form method="post">
     {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Опубликовать">
+    {{ form.category }}<br>
+    {{ form.author }}<br>
+    <br>{{ form.title }}<br>
+    {{ form.text }}<br>
+    <button type="submit" class="btn btn-success">Опубликовать</button>
 </form>
 {% endblock content %}

@@ -1,6 +1,6 @@
 import django_filters
 from django.forms import DateInput
-from django_filters import FilterSet, DateFilter, CharFilter
+from django_filters import FilterSet
 from .models import Post, Category
 from django import forms
 
@@ -17,4 +17,14 @@ class PostFilter(FilterSet):
             'author',
             'title',
             'time_in'
+        ]
+
+
+class NewsFilter(FilterSet):
+    category = django_filters.ModelMultipleChoiceFilter(queryset=Category.objects.all(), widget=forms.CheckboxSelectMultiple(attrs={'category': 'category'}), label = 'Категория')
+
+    class Meta:
+        model = Post
+        fields = [
+            'category'
         ]

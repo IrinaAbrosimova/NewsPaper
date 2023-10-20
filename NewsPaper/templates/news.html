@@ -9,22 +9,25 @@ News
 {% endblock title %}
 
 {% block content %}
-<a href="/news/search/">Поиск</a>
-<a href="/news/create/">Создать новость</a>
-<a href="/news/create/">Создать статью</a>
+<br>
+<a class="btn btn-primary" href="/news/search/">Поиск</a>
+<a class="btn btn-primary" href="/news/create/">Создать новость</a>
+<a class="btn btn-primary" href="/news/post/create/">Создать статью</a>
+<br>
 <p>
 <h1>Все новости статьи ({{ qty_post }})</h1>
 <p>
    <h3>{% current_time '%d %b %Y' %}</h3>
    <form action="" method="get">
        {{ filterset.form.as_p }}
-       <input type="submit" value="Найти" />
+       <input class="btn btn-primary" type='submit' value='Показать'>
    </form>
    <hr>
 
    {% if news %}
        <table>
            <tr>
+               <td>Тип</td>
                <td>Заголовок</td>
                <td>Описание</td>
                <td>Автор</td>
@@ -33,6 +36,7 @@ News
            </tr>
            {% for post in news %}
            <tr>
+               <td><p align="left">{{ post.type }}</td>
                <td><p align="left">{{ post.title }}</td>
                <td><p align="left">{{ post.text|truncatechars:20 }}</td>
                <td><p align="left">{{ post.author }}</td>

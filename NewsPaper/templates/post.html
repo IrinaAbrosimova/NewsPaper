@@ -10,6 +10,7 @@ Post
 <a href="{%url 'delete' post.pk%}">Удалить статью</a>
 <p>
 <h1>{{ post.title }}</h1>
+<p> Тип: {{post.type}} </p>
 <p> Рейтинг: {{post.rating}} </p>
 <p> Автор: {{post.author}} </p>
 <p>{{ post.time_in|date:'d M Y' }}</p>

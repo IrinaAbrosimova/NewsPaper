@@ -33,7 +33,7 @@ class Category(models.Model):
 
 class Post(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE, verbose_name=pgettext_lazy('Author', 'Author'))
-    type = models.CharField(max_length=7, choices=TYPE)
+    type = models.CharField(max_length=7, choices=TYPE, default='NWS')
     time_in = models.DateTimeField(auto_now_add=True)
     category = models.ManyToManyField(Category, through='PostCategory')
     title = models.CharField(max_length=100)
@@ -59,7 +59,7 @@ class Post(models.Model):
         return f'{self.title.title()}: {self.text[:20]}'
 
     def get_absolute_url(self):
-        return f'/news/{self.id}'
+        return reverse('news', args=[str(self.id)])
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

@@ -1,17 +1,18 @@
-from django import forms
 from django.core.exceptions import ValidationError
 from .models import Post
+from django.forms import ModelForm, TextInput, Textarea, Select
 
 
-class PostForm(forms.ModelForm):
+class PostForm(ModelForm):
     class Meta:
         model = Post
         fields = ('category', 'author', 'title', 'text')
 
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control'}),
-            'text': forms.TextInput(attrs={'class': 'form-control'}),
-            'category': forms.SelectMultiple(attrs={'class': 'form-control'})
+            'title': TextInput(attrs={'class': 'form-control', 'placeholder': 'Название'}),
+            'text': Textarea(attrs={'class': 'form-control', 'placeholder': 'Содержание'}),
+            'category': Select(attrs={'class': 'form-control'})
+
         }
 
     def clean(self):
