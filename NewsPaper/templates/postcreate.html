@@ -5,12 +5,12 @@ News
 {% endblock title %}
 
 {% block content %}
-<h1>Новая статья</h1><br>
+<h1>Создать</h1><br>
 <form method="post">
     {% csrf_token %}
     {{ form.category }}<br>
     {{ form.author }}<br>
-    <br>{{ form.title }}<br>
+    {{ form.title }}<br>
     {{ form.text }}<br>
     <button type="submit" class="btn btn-success">Опубликовать</button>
 </form>

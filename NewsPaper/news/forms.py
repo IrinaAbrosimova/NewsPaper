@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from .models import Post
-from django.forms import ModelForm, TextInput, Textarea, Select
+from django.forms import ModelForm, TextInput, Textarea, SelectMultiple, Select
 
 
 class PostForm(ModelForm):
@@ -11,7 +11,9 @@ class PostForm(ModelForm):
         widgets = {
             'title': TextInput(attrs={'class': 'form-control', 'placeholder': 'Название'}),
             'text': Textarea(attrs={'class': 'form-control', 'placeholder': 'Содержание'}),
-            'category': Select(attrs={'class': 'form-control'})
+            'category': SelectMultiple(attrs={'class': 'form-control'}),
+            'author': Select(attrs={'class': 'form-control', 'placeholder': 'Автор'}),
+
 
         }
 

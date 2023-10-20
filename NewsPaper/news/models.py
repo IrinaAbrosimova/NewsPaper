@@ -59,7 +59,7 @@ class Post(models.Model):
         return f'{self.title.title()}: {self.text[:20]}'
 
     def get_absolute_url(self):
-        return reverse('news', args=[str(self.id)])
+        return f'/news/{self.id}'
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

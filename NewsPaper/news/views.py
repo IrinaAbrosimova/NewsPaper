@@ -63,8 +63,7 @@ class PostCreate(CreateView):
 
 
 class PostUpdate(UpdateView):
-    template_name = 'postcreate.html'
-    context_object_name = 'edit'
+    template_name = 'postedit.html'
     form_class = PostForm
     model = Post
 
