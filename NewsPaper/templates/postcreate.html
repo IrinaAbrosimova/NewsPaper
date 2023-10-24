@@ -9,7 +9,6 @@ News
 <form method="post">
     {% csrf_token %}
     {{ form.category }}<br>
-    {{ form.author }}<br>
     {{ form.title }}<br>
     {{ form.text }}<br>
     <button type="submit" class="btn btn-success">Опубликовать</button>

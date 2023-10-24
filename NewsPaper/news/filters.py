@@ -21,7 +21,7 @@ class PostFilter(FilterSet):
 
 
 class NewsFilter(FilterSet):
-    category = django_filters.ModelMultipleChoiceFilter(queryset=Category.objects.all(), widget=forms.CheckboxSelectMultiple(attrs={'category': 'category'}), label = 'Категория')
+    category = django_filters.ModelMultipleChoiceFilter(queryset=Category.objects.all(), label='Категория')
 
     class Meta:
         model = Post

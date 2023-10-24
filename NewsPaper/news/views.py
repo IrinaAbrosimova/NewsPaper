@@ -5,7 +5,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 
 from .filters import PostFilter, NewsFilter
 from .forms import PostForm
-from .models import Post
+from .models import Post, Category, Author
 
 
 class PostList(ListView):
@@ -24,8 +24,17 @@ class PostList(ListView):
         context = super().get_context_data(**kwargs)
         context['time_now'] = datetime.utcnow()
         context['qty_post'] = len(Post.objects.order_by('time_in').values('id'))
+        context['categories'] = Category.objects.all()
         context['filterset'] = self.filterset
+        context['isauthor'] = self._isauthor()
         return context
+
+    def _isauthor(self):
+        try:
+            Author.objects.get(users=self.request.user)
+            return True
+        except Author.DoesNotExist:
+            return False
 
 
 class PostSearch(ListView):
@@ -54,6 +63,7 @@ class PostCreate(CreateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
+        self.object.author = Author.objects.get(users=self.request.user)
         if 'post' in self.request.path:
             type_ = 'PST'
         elif 'news' in self.request.path:
