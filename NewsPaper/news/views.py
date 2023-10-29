@@ -1,7 +1,8 @@
 from datetime import datetime
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 
 from .filters import PostFilter, NewsFilter
 from .forms import PostForm
@@ -56,7 +57,7 @@ class PostDetail(DetailView):
     queryset = Post.objects.all()
 
 
-class PostCreate(CreateView):
+class PostCreate(LoginRequiredMixin, CreateView):
     form_class = PostForm
     model = Post
     template_name = 'postcreate.html'
@@ -72,7 +73,7 @@ class PostCreate(CreateView):
         return super().form_valid(form)
 
 
-class PostUpdate(UpdateView):
+class PostUpdate(LoginRequiredMixin, UpdateView):
     template_name = 'postedit.html'
     form_class = PostForm
     model = Post
@@ -87,3 +88,9 @@ class PostDelete(DeleteView):
     template_name = 'postdelete.html'
     queryset = Post.objects.all()
     success_url = reverse_lazy('postlist')
+
+
+class ProtectedView(LoginRequiredMixin, TemplateView):
+    template_name = 'news.html'
+    model = Post
+    form_class = PostForm
