@@ -103,7 +103,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 
-LOGIN_URL = '/accounts/login/'
+LOGIN_URL = '/accounts/login'
 LOGIN_REDIRECT_URL = '/'
 
 WSGI_APPLICATION = 'NewsPaper.wsgi.application'
