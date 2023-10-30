@@ -57,7 +57,7 @@ class PostDetail(DetailView):
     queryset = Post.objects.all()
 
 
-class PostCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+class PostCreate(PermissionRequiredMixin, CreateView):
     permission_required = ('news.add_post',)
     form_class = PostForm
     model = Post
@@ -74,7 +74,7 @@ class PostCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+class PostUpdate(PermissionRequiredMixin, UpdateView):
     permission_required = ('news.change_post',)
     template_name = 'postedit.html'
     form_class = PostForm
@@ -85,7 +85,7 @@ class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
         return Post.objects.get(pk=id)
 
 
-class PostDelete(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+class PostDelete(PermissionRequiredMixin, DeleteView):
     permission_required = ('news.delete_post',)
     model = Post
     template_name = 'postdelete.html'
