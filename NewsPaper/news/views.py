@@ -156,23 +156,27 @@ class CategoryPost(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['posts'] = Post.objects.filter(category=kwargs['object'])
+        return context
 
 
+# Добавление категории:
 class AddCategoryView(CreateView):
     model = Category
     template_name = 'categories/add_category.html'
     fields = '__all__'
 
 
+# Список категорий:
 class CategoryList(ListView):
     model = Category
     template_name = 'categories/category_list.html'
     context_object_name = 'category'
 
 
+# Функция позволяющая подписаться на категорию
 def subscribe_to_category(request, pk):
+
     current_user = request.user
     CategorySubscribe.objects.create(category=Category.objects.get(pk=pk), subscriber=User.objects.get(pk=current_user.id))
+
     return render(request, 'subscribe.html')
-
-

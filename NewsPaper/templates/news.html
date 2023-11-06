@@ -57,6 +57,7 @@ News
                <td><p align="left">{{ post.author }}</td>
                <td><p align="left">{{ post.time_in|date:'d M Y' }}</td>
                <td><a class="nav-link active" aria-current="page" href="/news/{{ post.id  }}">...</a><td>
+               <td><p align="left">{{ post.category.name }}</td>
            </tr>
            {% endfor %}
 

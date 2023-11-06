@@ -9,15 +9,17 @@ Post
 <a href="{%url 'edit' post.pk%}">Редактировать статью</a>
 <a href="{%url 'delete' post.pk%}">Удалить статью</a>
 <p>
+
 <h1>{{ post.title }}</h1>
 <p> Тип: {{post.type}} </p>
-<p> Категория: {{ post.category.id }} </p>
+<p> Категория: {{ category.name }} </p>
 <p> Рейтинг: {{post.rating}} </p>
 <p> Автор: {{post.author}} </p>
 <p>{{ post.time_in|date:'d M Y' }}</p>
 <hr>{{ post.text }}</hr>
 <br>
 
-<p><a href="subscribe">Подписаться</a></p>
+<h1> {{ postcategory.id }}</h1>
+<p><a href="subscribe">Подписаться на новости категории</a></p>
 
 {% endblock content %}
