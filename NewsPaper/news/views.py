@@ -1,12 +1,18 @@
 from datetime import datetime
+from urllib import request
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.models import User
+from django.core.mail import EmailMultiAlternatives, mail_admins
+from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 
 from .filters import PostFilter, NewsFilter
 from .forms import PostForm
-from .models import Post, Category, Author
+from .models import Post, Category, Author, Appointment, CategorySubscribe, PostCategory
 
 
 class PostList(ListView):
@@ -56,6 +62,10 @@ class PostDetail(DetailView):
     context_object_name = 'post'
     queryset = Post.objects.all()
 
+    def get_category(self, **kwargs):
+        self.object.post = PostCategory.objects.get(post_id=self.id)
+        return PostCategory.objects.get(pk=id)
+
 
 class PostCreate(PermissionRequiredMixin, CreateView):
     permission_required = ('news.add_post',)
@@ -97,3 +107,72 @@ class ProtectedView(LoginRequiredMixin, TemplateView):
     template_name = 'news.html'
     model = Post
     form_class = PostForm
+
+
+class AppointmentView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'appointment/make_appointment.html', {})
+
+    def post(self, request, *args, **kwargs):
+        appointment = Appointment(
+            date=datetime.strptime(request.POST['date'], '%Y-%m-%d'),
+            client_name=request.POST['client_name'],
+            message=request.POST['message'],
+        )
+        appointment.save()
+
+        # получаем наш html
+        html_content = render_to_string(
+            'appointment/appointment_created.html',
+            {
+                'appointment': appointment,
+            }
+        )
+
+        # в конструкторе уже знакомые нам параметры, да? Называются правда немного по-другому, но суть та же.
+        msg = EmailMultiAlternatives(
+            subject=f'{appointment.client_name} {appointment.date.strftime("%Y-%m-%d")}',
+            body=appointment.message,  # это то же, что и message
+            from_email='IrinaAbr1986@yandex.ru',
+            to=['irina.abrosimova@live.com'],  # это то же, что и recipients_list
+        )
+        msg.attach_alternative(html_content, "appointment/appointment_created.html")  # добавляем html
+
+        mail_admins(
+            subject=f'{appointment.client_name} {appointment.date.strftime("%d %m %Y")}',
+            message=appointment.message,
+        )
+
+        msg.send()
+
+        return redirect('appointment_created')
+
+
+class CategoryPost(DetailView):
+    model = Category
+    template_name = 'categories/post_category.html'
+    context_object_name = 'postcategory'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['posts'] = Post.objects.filter(category=kwargs['object'])
+
+
+class AddCategoryView(CreateView):
+    model = Category
+    template_name = 'categories/add_category.html'
+    fields = '__all__'
+
+
+class CategoryList(ListView):
+    model = Category
+    template_name = 'categories/category_list.html'
+    context_object_name = 'category'
+
+
+def subscribe_to_category(request, pk):
+    current_user = request.user
+    CategorySubscribe.objects.create(category=Category.objects.get(pk=pk), subscriber=User.objects.get(pk=current_user.id))
+    return render(request, 'subscribe.html')
+
+
