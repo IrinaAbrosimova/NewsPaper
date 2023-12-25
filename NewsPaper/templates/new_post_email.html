@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вышла новая статья</title>
+</head>
+<body>
+<h2> Добрый день! {{ user.username }}! Новая <a href="{{ link }}">статья</a> в твоём любимом разделе!</h2>
+<h3>{{ headline }}</h3>
+<p>{{ article_text|truncatechars:50 }}</p>
+</body>
+</html>

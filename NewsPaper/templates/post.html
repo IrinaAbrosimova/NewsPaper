@@ -10,16 +10,19 @@ Post
 <a href="{%url 'delete' post.pk%}">Удалить статью</a>
 <p>
 
+{% if post %}
+
 <h1>{{ post.title }}</h1>
 <p> Тип: {{post.type}} </p>
-<p> Категория: {{ category.name }} </p>
+<p> Категория:
+    {% for cat in post.category.all %}
+        {{ cat }}</p>
+    {% endfor %}
 <p> Рейтинг: {{post.rating}} </p>
 <p> Автор: {{post.author}} </p>
 <p>{{ post.time_in|date:'d M Y' }}</p>
 <hr>{{ post.text }}</hr>
 <br>
-
-<p>{{ post.categories }}</p>
-<p><a href="subscribe">Подписаться на новости категории</a></p>
-
+</p>
+{% endif %}
 {% endblock content %}

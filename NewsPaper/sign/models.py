@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 from django import forms
 from allauth.account.forms import SignupForm
 from django.contrib.auth.models import Group
+from django.core.mail import send_mail
+
+from NewsPaper.settings import DEFAULT_FROM_EMAIL
 
 
 class BaseRegisterForm(UserCreationForm):
@@ -25,4 +28,12 @@ class CommonSignupForm(SignupForm):
         user = super(CommonSignupForm, self).save(request)
         basic_group = Group.objects.get(name='common')
         basic_group.user_set.add(user)
+        send_mail(
+            subject=user.username,
+            message='Вы успешно зарегистрировались',
+            from_email=DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email]
+        )
         return user
+
+

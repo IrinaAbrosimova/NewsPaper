@@ -8,22 +8,27 @@ PostCategory
 {% block content %}
 
 <h1> {{ postcategory }}</h1>
-<p><a href="subscribe">Подписаться на новости категории</a></p>
+<p class="text-center"><a href="subscribe" class="btn btn-primary">Подписаться на новости этой категории</a></p>
+
 
 {% if postcategory %}
         <table>
             <tr>
                 <td> Заголовок</td>
-                <td> Дата публикации </td>
                 <td> Текст </td>
-                <td> Тип </td>
+                <td> Автор </td>
+                <td> Дата публикации </td>
+                <td> Подробнее </td>
+
             </tr>
             {% for post in posts %}
             <tr>
-                <td> {{ post.title }} </td>
-                <td> {{ post.time_in|date:'d M Y' }} </td>
-                <td> {{ post.text|truncatewords:15 }} </td>
-                <td> {{ post.type }} </td>
+                <td><a align="left" class="nav-link active" aria-current="page" href="/news/{{ post.id  }}">{{ post.title }}</a><td>
+                <td><p align="left">{{ post.text|truncatewords:15 }} </td>
+                <td><p align="left">{{ post.author }} </td>
+                <td><p align="left">{{ post.time_in|date:'d M Y' }} </td>
+
+
             </tr>
             {% endfor %}
         </table>

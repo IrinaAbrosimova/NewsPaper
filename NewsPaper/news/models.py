@@ -33,10 +33,10 @@ class Author(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=40, unique=True)
-    subscribe = models.ManyToManyField(User, through='CategorySubscribe', verbose_name=pgettext_lazy('subscriber', 'subscriber'))
+    subscribers = models.ManyToManyField(User, related_name='categories')
 
     def __str__(self):
-        return self.name
+        return self.name.title()
 
 
 class CategorySubscribe(models.Model):

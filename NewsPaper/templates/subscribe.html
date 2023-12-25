@@ -1,14 +1,15 @@
 {% extends 'flatpages/default.html' %}
-{% load custom_filters %}
 
 {% block title %}
 Subscribed
 {% endblock title %}
 
-
 {% block content %}
 
-<h2> Вы подписаны.</h2>
+<h1> {{ postcategory }}</h1>
+
+   <h1 class="text-center">Вы подписаны на новости в категории "{{ category }}"</h1>
+
 
 
 {% endblock content %}

@@ -1,9 +1,9 @@
 from datetime import datetime
-from urllib import request
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User
-from django.core.mail import EmailMultiAlternatives, mail_admins
+from django.core.mail import EmailMultiAlternatives, mail_admins, send_mail
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -13,6 +13,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from .filters import PostFilter, NewsFilter
 from .forms import PostForm
 from .models import Post, Category, Author, Appointment, CategorySubscribe, PostCategory
+
+from NewsPaper.settings import DEFAULT_FROM_EMAIL
 
 
 class PostList(ListView):
@@ -116,8 +118,7 @@ class AppointmentView(View):
     def post(self, request, *args, **kwargs):
         appointment = Appointment(
             date=datetime.strptime(request.POST['date'], '%Y-%m-%d'),
-            client_name=request.POST['client_name'],
-            message=request.POST['message'],
+            category=request.POST['category']
         )
         appointment.save()
 
@@ -131,15 +132,15 @@ class AppointmentView(View):
 
         # в конструкторе уже знакомые нам параметры, да? Называются правда немного по-другому, но суть та же.
         msg = EmailMultiAlternatives(
-            subject=f'{appointment.client_name} {appointment.date.strftime("%Y-%m-%d")}',
-            body=appointment.message,  # это то же, что и message
+            subject=f'{appointment.category} {appointment.date.strftime("%Y-%m-%d")}',
+            body='',  # это то же, что и message
             from_email='IrinaAbr1986@yandex.ru',
             to=['irina.abrosimova@live.com'],  # это то же, что и recipients_list
         )
         msg.attach_alternative(html_content, "appointment/appointment_created.html")  # добавляем html
 
         mail_admins(
-            subject=f'{appointment.client_name} {appointment.date.strftime("%d %m %Y")}',
+            subject=f'{appointment.category} {appointment.date.strftime("%d %m %Y")}',
             message=appointment.message,
         )
 
@@ -174,9 +175,31 @@ class CategoryList(ListView):
 
 
 # Функция позволяющая подписаться на категорию
+@login_required
 def subscribe_to_category(request, pk):
-
     current_user = request.user
+    category = Category.objects.get(id=pk)
     CategorySubscribe.objects.create(category=Category.objects.get(pk=pk), subscriber=User.objects.get(pk=current_user.id))
+    message = 'Вы подписаны на рассылку постов категории'
+    send_mail(
+        subject=current_user.username,
+        message=f'{message} {category}',
+        from_email=DEFAULT_FROM_EMAIL,
+        recipient_list=[current_user.email]
+    )
+    return render(request, 'subscribe.html', {'category': category, 'message': message})
 
-    return render(request, 'subscribe.html')
+
+@login_required
+def unsubscribe(request, pk):
+    current_user = request.user
+    category = Category.objects.get(id=pk)
+    CategorySubscribe.objects.remove(category=Category.objects.get(pk=pk), subscriber=User.objects.get(pk=current_user.id))
+    message = 'Вы успешно отписались от рассылки новостей категории'
+    send_mail(
+        subject=current_user.username,
+        message=f'{message} {category}',
+        from_email=DEFAULT_FROM_EMAIL,
+        recipient_list=[current_user.email]
+    )
+    return render(request, 'unsubscribe.html', {'category': category, 'message': message})

@@ -33,7 +33,7 @@ Search
            {% for post in filter.qs %}
            <tr>
                <td>
-                <a href="/news/{{ post.id  }}">{{ post.title|censor }} </a>
+                <p align="left"><a href="/news/{{ post.id  }}">{{ post.title|censor }} </a>
             </td>
                <td><p align="left">{{ post.text|truncatechars:20 }}</td>
                <td><p align="left">{{ post.author }}</td>

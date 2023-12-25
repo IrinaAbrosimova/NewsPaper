@@ -42,22 +42,29 @@ News
    {% if news %}
        <table>
            <tr>
+               <td>Категория</td>
                <td>Тип</td>
                <td>Заголовок</td>
                <td>Описание</td>
                <td>Автор</td>
                <td>Дата публикации</td>
                <td>Подробнее</td>
+
            </tr>
            {% for post in news %}
            <tr>
+               <td><p align="left">
+                {% for cat in post.category.all %}
+                 {{ cat }}</p>
+                {% endfor %}
+                </td>
                <td><p align="left">{{ post.type }}</td>
                <td><p align="left">{{ post.title }}</td>
                <td><p align="left">{{ post.text|truncatechars:20 }}</td>
                <td><p align="left">{{ post.author }}</td>
                <td><p align="left">{{ post.time_in|date:'d M Y' }}</td>
                <td><a class="nav-link active" aria-current="page" href="/news/{{ post.id  }}">...</a><td>
-               <td><p align="left">{{ post.category.name }}</td>
+
            </tr>
            {% endfor %}
 
