@@ -1,14 +1,19 @@
 {% extends 'flatpages/default.html' %}
 
+{% load cache %}
+
 {% block title %}
 Post
 {% endblock title %}
 
 {% block content %}
+
+{% cache 300 buttons %}
 <a href="/news/search/">Поиск</a>
 <a href="{%url 'edit' post.pk%}">Редактировать статью</a>
 <a href="{%url 'delete' post.pk%}">Удалить статью</a>
 <p>
+{% endcache %}
 
 {% if post %}
 

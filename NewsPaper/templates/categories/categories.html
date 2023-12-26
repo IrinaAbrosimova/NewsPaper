@@ -1,5 +1,11 @@
 {% extends 'flatpages/default.html' %}
 
+{% load cache %} <!-- Загружаем кэширование -->
+    {% cache 30 header %} <!-- Кэшируем отдельный блок на 30 секунд -->
+        {% block header %}
+        {% endblock header %}
+    {% endcache %}
+
 {% block content %}
 
 {% if category_posts %}
