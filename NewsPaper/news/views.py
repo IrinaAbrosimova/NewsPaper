@@ -16,6 +16,8 @@ from .models import Post, Category, Author, Appointment, CategorySubscribe, Post
 
 from NewsPaper.settings import DEFAULT_FROM_EMAIL
 
+from django.core.cache import cache
+
 
 class PostList(ListView):
     model = Post
@@ -67,6 +69,19 @@ class PostDetail(DetailView):
     def get_category(self, **kwargs):
         self.object.post = PostCategory.objects.get(post_id=self.id)
         return PostCategory.objects.get(pk=id)
+
+    def get_object(self, *args, **kwargs):  # переопределяем метод получения объекта, как ни странно
+
+        obj = cache.get(f'product-{self.kwargs["pk"]}',
+                        None)  # кэш очень похож на словарь, и метод get действует так же. Он забирает значение по ключу, если его нет, то забирает None.
+
+        # если объекта нет в кэше, то получаем его и записываем в кэш
+
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'product-{self.kwargs["pk"]}', obj)
+
+        return obj
 
 
 class PostCreate(PermissionRequiredMixin, CreateView):

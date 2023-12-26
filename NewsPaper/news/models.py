@@ -5,6 +5,8 @@ from django.db import models
 from django.db.models import Sum
 from django.utils.translation import pgettext_lazy
 
+from django.core.cache import cache
+
 
 post = 'PST'
 news = 'NWS'
@@ -75,7 +77,8 @@ class Post(models.Model):
         return f'/news/{self.id}'
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+        super().save(*args, **kwargs) # сначала вызываем метод родителя, чтобы объект сохранился
+        cache.delete(f'product-{self.pk}') # затем удаляем его из кэша, чтобы сбросить его
 
 
 class PostCategory(models.Model):
