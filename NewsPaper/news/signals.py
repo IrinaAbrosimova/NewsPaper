@@ -13,7 +13,7 @@ def send_notifications(preview, pk, title, subscriber):
         {
             'title': title,
             'text': preview,
-            'link': f'{SITE_URL}{pk}',
+            'link': f'{SITE_URL}news/{pk}',
         }
     )
 
@@ -32,7 +32,7 @@ def send_notifications(preview, pk, title, subscriber):
 def daily_posts_limit(sender, instance, **kwargs):
     user = instance.author.user
     today = datetime.datetime.now()
-    count = Post.objects.filter(author__user=user, time_in__date=today).count()
+    count = Post.objects.filter(author__user=user, time_in=today).count()
     try:
         if count <= 3:
             pass
