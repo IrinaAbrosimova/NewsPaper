@@ -1,40 +1,30 @@
+from NewsPaper.settings import SITE_URL, DEFAULT_FROM_EMAIL
 import datetime
-
 from django.db.models.signals import m2m_changed, pre_save
 from django.dispatch import receiver
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-
-from .models import PostCategory, Post, Category
-from django.conf import settings
+from .models import PostCategory, Post
 
 
-def send_notifications(pk):
-    post = Post.objects.get(pk=pk)
-    categories = post.category.all()
-    subscribers: list[str] = []
-    for category in categories:
-        subscribers += category.subscriber.all()
-
-    subscribers_emails = [s.email for s in subscribers]
-
+def send_notifications(preview, pk, title, subscriber):
     html_content = render_to_string(
         'new_post_email.html',
         {
-            'title': post.title,
-            'text': post.preview,
-            'link': f'{settings.SITE_URL}news/{pk}'
+            'title': title,
+            'text': preview,
+            'link': f'{SITE_URL}{pk}',
         }
     )
 
     msg = EmailMultiAlternatives(
-        subject='Новая статья уже на сайте',
+        subject=title,
         body='',
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        to=subscribers_emails,
+        from_email=DEFAULT_FROM_EMAIL,
+        to=subscriber
     )
 
-    msg.attach_alternative(html_content, 'text/html')
+    msg.attach_alternative(html_content, "text/html")
     msg.send()
 
 
@@ -52,32 +42,13 @@ def daily_posts_limit(sender, instance, **kwargs):
 
 @receiver(m2m_changed, sender=PostCategory)
 def weekly_notify(sender, instance, **kwargs):
-    today = datetime.datetime.now()
-    last_week = today - datetime.timedelta(days=7)
-    this_week_posts = Post.objects.filter(time_in__gt=last_week)
-    for category in Category.objects.all():
-        post_list = this_week_posts.filter(category=category)
-        if post_list:
-            subscribers = category.subscriber.values('username', 'email')
-            recipients = []
-            for subscriber in subscribers:
-                recipients.append(subscriber['email'])
+    if kwargs['action'] == 'post_add':
 
-            html_content = render_to_string(
-                'news/daily_news.html',
-                {
-                    'link': f'{settings.SITE_URL}news/',
-                }
-            )
+        categories = instance.category.all()
+        subscribers_emails: list[str] = []
+        for category in categories:
+            subscribers_emails += category.subscriber.all()
 
-            msg = EmailMultiAlternatives(
-                subject='Статьи за неделю',
-                body='',
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to=recipients,
-            )
+        subscribers_emails = [s.email for s in subscribers_emails]
 
-            msg.attach_alternative(html_content, 'text/html')
-            msg.send()
-
-    print('Рассылка произведена!')
+        send_notifications(instance.preview(), instance.pk, instance.title, subscribers_emails)
