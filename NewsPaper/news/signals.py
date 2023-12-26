@@ -1,10 +1,11 @@
-from NewsPaper.settings import SITE_URL, DEFAULT_FROM_EMAIL
+
 import datetime
 from django.db.models.signals import m2m_changed, pre_save
 from django.dispatch import receiver
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from .models import PostCategory, Post
+from ..NewsPaper.settings import DEFAULT_FROM_EMAIL
 
 
 def send_notifications(preview, pk, title, subscriber):
@@ -13,7 +14,7 @@ def send_notifications(preview, pk, title, subscriber):
         {
             'title': title,
             'text': preview,
-            'link': f'{SITE_URL}news/{pk}',
+            'link': f'http://127.0.0.1:8000/news/{pk}',
         }
     )
 
