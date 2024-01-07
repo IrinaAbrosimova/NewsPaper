@@ -194,7 +194,7 @@ class CategoryList(ListView):
 def subscribe_to_category(request, pk):
     current_user = request.user
     category = Category.objects.get(id=pk)
-    CategorySubscribe.objects.create(category=Category.objects.get(pk=pk), subscriber=User.objects.get(pk=current_user.id))
+    category.subscriber.add(current_user)
     message = 'Вы подписаны на рассылку постов категории'
     send_mail(
         subject=current_user.username,
@@ -209,7 +209,7 @@ def subscribe_to_category(request, pk):
 def unsubscribe(request, pk):
     current_user = request.user
     category = Category.objects.get(id=pk)
-    CategorySubscribe.objects.remove(category=Category.objects.get(pk=pk), subscriber=User.objects.get(pk=current_user.id))
+    category.subscriber.remove(current_user)
     message = 'Вы успешно отписались от рассылки новостей категории'
     send_mail(
         subject=current_user.username,
